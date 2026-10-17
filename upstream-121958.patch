@@ -1,0 +1,69 @@
+From 5a4e2e8f186072ebf811f03baf2e0bbc22bb990a Mon Sep 17 00:00:00 2001
+From: Clay John <claynjohn@gmail.com>
+Date: Thu, 30 Jul 2026 14:56:16 -0700
+Subject: [PATCH] Make RID_Owners threadsafe in the Dummy Renderer
+
+This is needed since these RIDs can be allocated from any thread.
+
+This matches the behavior on the other renderers
+---
+ servers/rendering/dummy/storage/material_storage.h | 4 ++--
+ servers/rendering/dummy/storage/mesh_storage.h     | 4 ++--
+ servers/rendering/dummy/storage/texture_storage.h  | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/servers/rendering/dummy/storage/material_storage.h b/servers/rendering/dummy/storage/material_storage.h
+index 3d7e5a9cc981..f9b8b53cb860 100644
+--- a/servers/rendering/dummy/storage/material_storage.h
++++ b/servers/rendering/dummy/storage/material_storage.h
+@@ -50,7 +50,7 @@ class MaterialStorage : public RendererMaterialStorage {
+ 		HashMap<StringName, ShaderLanguage::ShaderNode::Uniform> uniforms;
+ 	};
+ 
+-	mutable RID_Owner<DummyShader> shader_owner;
++	mutable RID_Owner<DummyShader, true> shader_owner;
+ 
+ 	ShaderCompiler dummy_compiler;
+ 	HashSet<RID> dummy_embedded_set;
+@@ -60,7 +60,7 @@ class MaterialStorage : public RendererMaterialStorage {
+ 		RID next_pass;
+ 	};
+ 
+-	mutable RID_Owner<DummyMaterial> material_owner;
++	mutable RID_Owner<DummyMaterial, true> material_owner;
+ 
+ public:
+ 	static MaterialStorage *get_singleton() { return singleton; }
+diff --git a/servers/rendering/dummy/storage/mesh_storage.h b/servers/rendering/dummy/storage/mesh_storage.h
+index eae93ef2c8e1..e2b86e8cd3c3 100644
+--- a/servers/rendering/dummy/storage/mesh_storage.h
++++ b/servers/rendering/dummy/storage/mesh_storage.h
+@@ -47,13 +47,13 @@ class MeshStorage : public RendererMeshStorage {
+ private:
+ 	static MeshStorage *singleton;
+ 
+-	mutable RID_Owner<DummyMesh> mesh_owner;
++	mutable RID_Owner<DummyMesh, true> mesh_owner;
+ 
+ 	struct DummyMultiMesh {
+ 		PackedFloat32Array buffer;
+ 	};
+ 
+-	mutable RID_Owner<DummyMultiMesh> multimesh_owner;
++	mutable RID_Owner<DummyMultiMesh, true> multimesh_owner;
+ 
+ public:
+ 	static MeshStorage *get_singleton() { return singleton; }
+diff --git a/servers/rendering/dummy/storage/texture_storage.h b/servers/rendering/dummy/storage/texture_storage.h
+index 7824ab84f99a..8429d1e400de 100644
+--- a/servers/rendering/dummy/storage/texture_storage.h
++++ b/servers/rendering/dummy/storage/texture_storage.h
+@@ -42,7 +42,7 @@ class TextureStorage : public RendererTextureStorage {
+ 	struct DummyTexture {
+ 		Ref<Image> image;
+ 	};
+-	mutable RID_PtrOwner<DummyTexture> texture_owner;
++	mutable RID_PtrOwner<DummyTexture, true> texture_owner;
+ 
+ public:
+ 	static TextureStorage *get_singleton() { return singleton; }

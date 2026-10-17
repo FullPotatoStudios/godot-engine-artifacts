@@ -1,0 +1,27 @@
+From 53ec17a1d2ae9a742ca5a2f65906f52604dfae6e Mon Sep 17 00:00:00 2001
+From: Skyth <19259897+blueskythlikesclouds@users.noreply.github.com>
+Date: Mon, 3 Aug 2026 19:05:29 +0300
+Subject: [PATCH] Fix lights not getting unpaired when setting geometry layer
+ mask.
+
+---
+ servers/rendering/renderer_scene_cull.cpp | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/servers/rendering/renderer_scene_cull.cpp b/servers/rendering/renderer_scene_cull.cpp
+index 0d3a16b57552..b37c9c75c9fa 100644
+--- a/servers/rendering/renderer_scene_cull.cpp
++++ b/servers/rendering/renderer_scene_cull.cpp
+@@ -928,10 +928,9 @@ void RendererSceneCull::instance_set_layer_mask(RID p_instance, uint32_t p_mask)
+ 		return;
+ 	}
+ 
+-	// Particles always need to be unpaired. Geometry may need to be unpaired, but only if lights or decals use pairing.
++	// Particles and geometries need to be unpaired.
+ 	// Needs to happen before layer mask changes so we can avoid attempting to unpair something that was never paired.
+-	if (instance->base_type == RSE::INSTANCE_PARTICLES ||
+-			(((geometry_instance_pair_mask & (1 << RSE::INSTANCE_LIGHT)) || (geometry_instance_pair_mask & (1 << RSE::INSTANCE_DECAL))) && ((1 << instance->base_type) & RSE::INSTANCE_GEOMETRY_MASK))) {
++	if (instance->base_type == RSE::INSTANCE_PARTICLES || ((1 << instance->base_type) & RSE::INSTANCE_GEOMETRY_MASK)) {
+ 		_unpair_instance(instance);
+ 		singleton->_instance_queue_update(instance, false, false);
+ 	}

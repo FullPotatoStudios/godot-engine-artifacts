@@ -1,0 +1,91 @@
+diff --git a/core/io/resource_loader.cpp b/core/io/resource_loader.cpp
+index e7cf8b8a3fc5e57196b70618ba6d28b7f46195e6..232a23cc0c8cde380cd40ed1e089b801e6c52fd9 100644
+--- a/core/io/resource_loader.cpp
++++ b/core/io/resource_loader.cpp
+@@ -489,7 +489,26 @@ void ResourceLoader::_run_load_task(void *p_userdata) {
+ 				// This is not the most optimal thing to do, but it is safe. Either the
+ 				// dependency will complete soon, or will block soon when we can safely
+ 				// yield.
+-				OS::get_singleton()->delay_usec(1000);
++				// A loader can be blocked on a registered cache lock, which is
++				// not visible in thread_waiting_on. Let it make progress.
++#ifdef THREADS_ENABLED
++				// A recursive caller can still own the physical load lock.
++				// Restore cache locks before that lock, as in the condition wait.
++				auto &load_mutex_lock = thread_load_mutex._get_lock();
++				const bool relock_load_mutex = load_mutex_lock.owns_lock();
++				if (relock_load_mutex) {
++					load_mutex_lock.unlock();
++				}
++#endif
++				{
++					WorkerThreadPool::UnlockAllowanceScope unlock_allowance;
++					OS::get_singleton()->delay_usec(1000);
++				}
++#ifdef THREADS_ENABLED
++				if (relock_load_mutex) {
++					load_mutex_lock.lock();
++				}
++#endif
+ 			}
+ 		} while (wait && status == THREAD_LOAD_IN_PROGRESS && !cleaning_tasks);
+ 
+@@ -1083,7 +1102,19 @@ Ref<Resource> ResourceLoader::_load_complete_inner(LoadToken &p_load_token, Erro
+ 				}
+ 				load_task.awaiters_count++;
+ 				do {
++#ifdef THREADS_ENABLED
++					{
++						WorkerThreadPool::UnlockAllowanceScope unlock_allowance;
++						load_task.cond_var->wait(p_thread_load_lock);
++						// Restore cache locks before the load mutex. Unlock
++						// the underlying lock, preserving the recursive count
++						// just as ConditionVariable::wait does above.
++						thread_load_mutex._get_lock().unlock();
++					}
++					thread_load_mutex._get_lock().lock();
++#else
+ 					load_task.cond_var->wait(p_thread_load_lock);
++#endif
+ 					DEV_ASSERT(thread_load_tasks.has(p_load_token.local_path) && p_load_token.get_reference_count());
+ 				} while (load_task.need_wait);
+ 				load_task.awaiters_count--;
+diff --git a/core/object/worker_thread_pool.cpp b/core/object/worker_thread_pool.cpp
+index f5574c47a05c6d959382972556ed7413076c0328..39b1ff40c9d9181ab683cdf3dd9e82d39d1ec71b 100644
+--- a/core/object/worker_thread_pool.cpp
++++ b/core/object/worker_thread_pool.cpp
+@@ -485,6 +485,14 @@ void WorkerThreadPool::_unlock_unlockable_mutexes() {
+ #endif
+ }
+ 
++WorkerThreadPool::UnlockAllowanceScope::UnlockAllowanceScope() {
++	WorkerThreadPool::get_singleton()->_unlock_unlockable_mutexes();
++}
++
++WorkerThreadPool::UnlockAllowanceScope::~UnlockAllowanceScope() {
++	WorkerThreadPool::get_singleton()->_lock_unlockable_mutexes();
++}
++
+ void WorkerThreadPool::_wait_collaboratively(ThreadData *p_caller_pool_thread, Task *p_task) {
+ 	// Keep processing tasks until the condition to stop waiting is met.
+ 
+diff --git a/core/object/worker_thread_pool.h b/core/object/worker_thread_pool.h
+index 808be67a261256868356dbdfea74e35976d11eda..d971df369d878f59a3a7da9d8c319ad790cfde79 100644
+--- a/core/object/worker_thread_pool.h
++++ b/core/object/worker_thread_pool.h
+@@ -295,6 +295,15 @@ public:
+ 	static void thread_exit_unlock_allowance_zone(uint32_t p_zone_id) {}
+ #endif
+ 
++	// Only for blocking waits. No script or cache access may run in this scope.
++	class UnlockAllowanceScope {
++	public:
++		UnlockAllowanceScope();
++		~UnlockAllowanceScope();
++		UnlockAllowanceScope(const UnlockAllowanceScope &) = delete;
++		UnlockAllowanceScope &operator=(const UnlockAllowanceScope &) = delete;
++	};
++
+ 	void init(int p_thread_count = -1, float p_low_priority_task_ratio = 0.3);
+ 	void exit_languages_threads();
+ 	void finish();

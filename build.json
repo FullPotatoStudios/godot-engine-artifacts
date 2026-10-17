@@ -1,0 +1,61 @@
+{
+  "upstream": "https://github.com/godotengine/godot.git",
+  "revision": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "version": "4.7.2",
+  "build_name": "aeons_patch1",
+  "patches": [
+    {
+      "path": "cache-waits.patch",
+      "sha256": "190ff543d50f1806601d1db059a1311a554357c8099ec2cdefa5bbefec5dc9fb"
+    },
+    {
+      "path": "upstream-122064.patch",
+      "sha256": "3e62fb4116de3882f74f8624b2662322f2125f15a5a304a903bbb2d344823af1",
+      "upstream_commit": "53ec17a1d2ae9a742ca5a2f65906f52604dfae6e",
+      "upstream_pr": "https://github.com/godotengine/godot/pull/122064"
+    },
+    {
+      "path": "upstream-121958.patch",
+      "sha256": "873118b278a156783712a5cdf6a4cf18fa83180bb2229ed1a903b81e83ee06ee",
+      "upstream_commit": "5a4e2e8f186072ebf811f03baf2e0bbc22bb990a",
+      "upstream_pr": "https://github.com/godotengine/godot/pull/121958"
+    }
+  ],
+  "dependencies": {
+    "linux_sdk": {
+      "url": "https://github.com/godotengine/buildroot/releases/download/godot-2026.05.x-1/x86_64-godot-linux-gnu_sdk-buildroot.tar.bz2",
+      "sha256": "9ecde61f7d500ffbd8cffddef3149a01984802c033ca19935d25e28293f34bb8",
+      "root": "x86_64-godot-linux-gnu_sdk-buildroot"
+    },
+    "mingw": {
+      "url": "https://github.com/mstorsjo/llvm-mingw/releases/download/20261006/llvm-mingw-20261006-ucrt-ubuntu-22.04-x86_64.tar.xz",
+      "sha256": "5f9c6ed95b2d4bdb2869a488c5fd5857fbdabcf288a0aa3eb1da43f6a08d8ab4",
+      "root": "llvm-mingw-20261006-ucrt-ubuntu-22.04-x86_64"
+    },
+    "accesskit": {
+      "url": "https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.22.3/accesskit-c-0.22.3.zip",
+      "sha256": "41b30b1382d03b225b6f7e8721269a32557a68065804f3797bdffc34a3273498",
+      "root": "accesskit-c-0.22.3"
+    },
+    "nir": {
+      "url": "https://github.com/godotengine/godot-nir-static/releases/download/25.3.1-3/godot-nir-static-x86_64-llvm-release.zip",
+      "sha256": "2029b6a5f21572473f9e545e089d8949bedc6c806a41f9e4a38f34496ddab110"
+    },
+    "winrt": {
+      "url": "https://github.com/godotengine/winrt-mingw/releases/download/72/winrt-headers.zip",
+      "sha256": "9310868d0a82d11b7ae1943c4f35c202c6c9a692ee2deec4bde241fbe2639961"
+    },
+    "angle": {
+      "url": "https://github.com/godotengine/godot-angle-static/releases/download/chromium/7219/godot-angle-static-x86_64-llvm-release.zip",
+      "sha256": "786233bccfcde4a0167dac19d883613451ed1e8d9473fd857999d2f7e24d3e6d"
+    },
+    "pix": {
+      "url": "https://api.nuget.org/v3-flatcontainer/winpixeventruntime/1.0.240308001/winpixeventruntime.1.0.240308001.nupkg",
+      "sha256": "726acc93d6968e2146261a1e415521747d50ad69894c2b42b5d0d4c29fd66ec4"
+    },
+    "agility": {
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.direct3d.d3d12/1.618.5/microsoft.direct3d.d3d12.1.618.5.nupkg",
+      "sha256": "0027fc24f947c48dbded13ada7d280be221eb651644e23a8a476f0f1f0a079dd"
+    }
+  }
+}

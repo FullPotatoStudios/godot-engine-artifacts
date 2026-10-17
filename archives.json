@@ -1,0 +1,40 @@
+{
+  "engine_build": "4.7.2.stable.aeons_patch1.ed1daf0bf",
+  "upstream_revision": "ed1daf0bf001b61586d9930840f2f1394092c079",
+  "archives": {
+    "Godot_4.7.2.aeons_patch1_linux.x86_64.zip": {
+      "bytes": 85987240,
+      "sha256": "ba75f6eb218f25b05914e5d10c5fb12b97bc84ce43269f39008ba9acd14b22c4",
+      "entries": [
+        "Godot_4.7.2.aeons_patch1_linux.x86_64"
+      ]
+    },
+    "Godot_4.7.2.aeons_patch1_linux_templates.zip": {
+      "bytes": 34084499,
+      "sha256": "5c2180e3b6861d52707778ff11e8f2fcc425a61b815c743bc22704a863670540",
+      "entries": [
+        "linux_release.x86_64"
+      ]
+    },
+    "Godot_4.7.2.aeons_patch1_windows.x86_64.exe.zip": {
+      "bytes": 86314914,
+      "sha256": "42c568cd0e0d9579ff9d8b5fc1635583e124e8534e21428c2b7dc39a3962656a",
+      "entries": [
+        "Godot_4.7.2.aeons_patch1_windows.x86_64.exe",
+        "D3D12Core.dll",
+        "d3d12SDKLayers.dll",
+        "Godot_4.7.2.aeons_patch1_windows.x86_64.console.exe"
+      ]
+    },
+    "Godot_4.7.2.aeons_patch1_windows_templates.zip": {
+      "bytes": 33186628,
+      "sha256": "77ff8c5999181428c35fcd6046ba157b6d55741570cc80ca57e33d45402c9b9b",
+      "entries": [
+        "windows_release_x86_64.exe",
+        "D3D12Core.x86_64.dll",
+        "d3d12SDKLayers.x86_64.dll"
+      ]
+    }
+  },
+  "qualification": "Linux controls passed. Windows Wine/Proton qualification is in progress. No native Windows driver has run. No macOS custom build."
+}
