@@ -29,7 +29,13 @@ LLVM-MinGW with WinRT, AccessKit, D3D12 and ANGLE enabled. Builds set
 
 Linux runtime controls pass. Windows qualification uses Wine/Proton on Linux,
 with Vulkan as the required renderer and translated D3D12 as a report.
-No native Windows driver has run. Qualification is still in progress.
+No native Windows driver has run. Editor and release-template renderer controls
+pass 6/6 each. Patched cache controls pass 15/15. Stock cache overlaps block
+12/12, while its single-load control passes 2/3. One unexpected blocked stock
+control remains recorded; its cause is not attributed. These results do not
+qualify a complete Windows client package.
+The [temporary release](https://github.com/FullPotatoStudios/godot-engine-artifacts/releases/tag/4.7.2-aeons-patch1)
+contains the archives, selective template index, checksums and license notices.
 Do not infer production activation from the existence of an archive.
 macOS remains on the official Godot build.
 

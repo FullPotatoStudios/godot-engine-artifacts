@@ -36,5 +36,10 @@
       ]
     }
   },
-  "qualification": "Linux controls passed. Windows Wine/Proton qualification is in progress. No native Windows driver has run. No macOS custom build."
+  "qualification": {
+    "linux": "Native cache 15/15; renderer 6/6; client and arrival export/runtime controls pass.",
+    "windows": "GE-Proton11-9 on Linux RADV. Editor renderer 6/6; release-template renderer 6/6; patched cache 15/15. D3D12 report 3/3 on editor and 3/3 on release templates. No native Windows driver.",
+    "stock_cache_control": "Overlap cases blocked 12/12. Single-load control passed 2/3. One unexpected blocked control is retained; its cause is not attributed.",
+    "limits": "No full Windows sidecar package qualification. Consumer activation still requires review. Timings are reports."
+  }
 }
